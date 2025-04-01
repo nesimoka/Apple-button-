@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <title>Оплата через Apple Pay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f2f2f2;
+      margin: 0;
+      font-family: sans-serif;
+    }
+    #apple-pay-button {
+      display: none;
+      background-color: black;
+      color: white;
+      padding: 15px 30px;
+      border-radius: 5px;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <button id="apple-pay-button">Оплатити через Apple Pay</button>
+
+  <script>
+    const stripe = Stripe("pk_live_51NnnUtL4UaDondO3TtOO1HPiAJj2fvZ1tA3pyZkLlt7mCTOv1POsnfYcCg9RjMV8YdpbbPBULcdp7fpFnB9uNDVr00MQIQNEH8");
+
+    if (window.ApplePaySession && window.ApplePaySession.canMakePayments()) {
+      document.getElementById("apple-pay-button").style.display = "block";
+    }
+
+    document.getElementById("apple-pay-button").addEventListener("click", async () => {
+      const { error } = await stripe.redirectToCheckout({
+        lineItems: [{ price: "price_1R8jcWL4UaDondO3sXQZQlYv", quantity: 1 }],
+        mode: "payment",
+        successUrl: "https://andriinesimoka.com/success",
+        cancelUrl: "https://andriinesimoka.com/cancel"
+      });
+
+      if (error) {
+        console.error("Stripe error:", error);
+        alert("Сталася помилка. Спробуйте ще раз.");
+      }
+    });
+  </script>
+</body>
+</html>
